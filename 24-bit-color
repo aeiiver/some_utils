@@ -1,0 +1,37 @@
+#!/bin/sh
+
+ITERATIONS=${1:-1}
+
+RED=255
+GREEN=0
+BLUE=0
+
+print_color() {
+	col=$1
+	op=$2
+
+	i=0
+	stop=255
+	while [ "$i" -lt "$stop" ]; do
+		case "$op" in
+		+) eval "$col=\$((\"$col\" + 1))" ;;
+		-) eval "$col=\$((\"$col\" - 1))" ;;
+		esac
+		printf '\033[48;2;%d;%d;%dm ' $RED $GREEN $BLUE
+		i=$((i + 1))
+	done
+}
+
+_i=0
+_stop=$ITERATIONS
+while [ "$_i" -lt "$_stop" ]; do
+	print_color 'GREEN' + # red -> yellow
+	print_color 'RED' -   # -> green
+	print_color 'BLUE' +  # -> cyan
+	print_color 'GREEN' - # -> blue
+	print_color 'RED' +   # -> purple
+	print_color 'BLUE' -  # -> red
+	printf '\033[0m'
+	_i=$((_i + 1))
+done
+printf '\n'

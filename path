@@ -1,0 +1,5 @@
+#!/bin/sh
+
+sed 's/:/\n/g' <<-EOF
+	$PATH
+EOF

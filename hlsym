@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+
+import argparse as argparse
+import io as io
+
+
+def highlight(fp: io.TextIOWrapper) -> None:
+    RESET = '\033[0m'
+    RED_BOLD = '\033[1;91m'
+    BLACK = '\033[90m'
+
+    while (row := fp.readline().rstrip('\n')) != '':
+        row_len = len(row)
+        bad_idxs = []
+
+        for idx in range(row_len):
+            left = row[idx]
+            right = row[-1 - idx]
+
+            if left != right or idx in bad_idxs:
+                print(f'{RED_BOLD}{left}{RESET}', end='')
+                bad_idxs.append(row_len - 1 - idx)
+            else:
+                print(f'{BLACK}{left}{RESET}', end='')
+        print()
+
+
+def check(fp: io.TextIOWrapper) -> bool:
+    while (row := fp.readline().rstrip('\n')) != '':
+
+        for idx in range(len(row)):
+            left = row[idx]
+            right = row[-1 - idx]
+
+            if left != right:
+                return True
+    return False
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description='Highlight unsymmetric parts of a file.')
+    parser.add_argument('file', help='file to highlight', type=str)
+    parser.add_argument(
+        '-q', '--quiet', help="don't output anything", action='store_true')
+
+    args = parser.parse_args()
+    file = args.file
+    is_quiet = args.quiet
+
+    with open(file, 'r') as fp:
+        if is_quiet:
+            exit(int(check(fp)))
+        else:
+            highlight(fp)

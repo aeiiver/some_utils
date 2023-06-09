@@ -1,0 +1,114 @@
+#!/bin/sh
+
+# Wrapper script for 'xdg-user-dirs-update' that also moves XDG directories
+# instead of only updating $XDG_CONFIG_HOME/user-dirs.dirs
+
+PROGRAM=$(basename "$0")
+XDG_DIR_NAMES="\
+	DESKTOP
+	DOCUMENTS
+	DOWNLOAD
+	MUSIC
+	PICTURES
+	PUBLICSHARE
+	TEMPLATES
+	VIDEOS"
+
+print_usage() {
+	cat <<-EOF
+		usage: $PROGRAM <xdg_dir> <dest>
+
+		Change the location of XDG user directory.
+
+		XDG user directories:
+		$XDG_DIR_NAMES
+	EOF
+}
+
+exit_if_bad_xdg_dir() {
+	s=$(
+		grep "	$1$" <<-EOF
+			$XDG_DIR_NAMES
+		EOF
+	)
+	if [ -z "$s" ]; then
+		printf "%s: no such XDG directory '%s'\n" "$PROGRAM" "$xdg_dir"
+		exit 1
+	fi
+}
+
+main() {
+	if [ -z "$2" ]; then
+		print_usage
+		exit 1
+	fi
+
+	xdg_dir=$1
+	dest=$(realpath "$2")
+	exit_if_bad_xdg_dir "$xdg_dir"
+
+	# match $dest:
+	#     - it doesn't exist => ok
+	#     - it exists => match again
+	#         - not a directory => error
+	#         - a directory => match again
+	#             - $HOME => error
+	#             - non-empty directory => error
+	#             - empty directory => ok
+	#
+	if [ -e "$dest" ]; then
+		if [ ! -d "$dest" ]; then
+			printf "%s: can't overwrite file '%s'\n" "$PROGRAM" "$dest"
+			exit 1
+		elif [ "$dest" -ef "$HOME" ]; then
+			printf "%s: can't overwrite home directory\n" "$PROGRAM"
+			exit 1
+		elif [ -n "$(ls -A "$dest")" ]; then
+			printf "%s: can't overwrite non-empty directory '%s'\n" "$PROGRAM" "$dest"
+			exit 1
+		fi
+	fi
+
+	# match $old_dir:
+	#     - it doesn't exist => update variable
+	#     - it exists => match this one:
+	#         - $dest => do nothing
+	#         - not a directory => update variable
+	#         - $HOME => update variable
+	#         - any other directory => update variable and move $old_dir
+	#
+	old_dir=$(xdg-user-dir "$xdg_dir")
+
+	#
+	# Do nothing
+	#
+	if [ "$old_dir" -ef "$dest" ]; then
+		printf "%s: XDG variable '$xdg_dir' already points to '$dest'\n" "$PROGRAM"
+		exit 1
+	fi
+
+	#
+	# Update and move
+	#
+	if [ -d "$old_dir" ] && [ ! "$old_dir" -ef "$HOME" ]; then
+		echo "mkdir: '$dest'"
+		echo "mv: '$old_dir' -> '$dest'"
+		echo "xdg-user-dirs-update: $xdg_dir ($old_dir) -> '$dest'"
+
+		mkdir -p "$dest"
+		mv -T "$old_dir" "$dest"
+		xdg-user-dirs-update --set "$xdg_dir" "$dest"
+		exit
+	fi
+
+	#
+	# Update only
+	#
+	echo "mkdir: '$dest'"
+	echo "xdg-user-dirs-update: $xdg_dir ($old_dir) -> '$dest'"
+
+	mkdir -p "$dest"
+	xdg-user-dirs-update --set "$xdg_dir" "$dest"
+}
+
+main "$@"

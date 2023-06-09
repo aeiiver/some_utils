@@ -1,0 +1,50 @@
+#!/bin/sh
+
+FG_WHITE=97
+FG_BLACK=30
+
+col=0
+stop=8
+while [ $col -lt $stop ]; do
+	printf '\033[%d;48;5;%dm   %s   ' $FG_WHITE $col $col
+	printf '\033[0m '
+	col=$((col + 1))
+done
+
+printf '          ' # manually alignment deadass
+
+col=8
+stop=16
+while [ $col -lt $stop ]; do
+	printf '\033[%d;48;5;%dm   %s   ' $FG_BLACK $col $col
+	printf '\033[0m '
+	col=$((col + 1))
+done
+
+printf '\n'
+
+col=16
+stop=232
+while [ $col -lt $stop ]; do
+	i=$((col - 16))
+	fg=$FG_WHITE
+	[ $((i % 36)) -eq 0 ] && printf '\n'
+	[ $((i / 18 % 2)) -eq 1 ] && fg=$FG_BLACK
+	printf '\033[%d;48;5;%dm%3s' $fg $col $col
+	printf '\033[0m '
+	col=$((col + 1))
+done
+
+printf '\n\n'
+
+col=232
+stop=256
+while [ $col -lt $stop ]; do
+	fg=$FG_WHITE
+	[ $col -gt 243 ] && fg=$FG_BLACK
+	printf '\033[%d;48;5;%dm %s ' $fg $col $col
+	printf '\033[0m '
+	col=$((col + 1))
+done
+
+printf '\n'
