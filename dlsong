@@ -1,0 +1,29 @@
+#!/bin/sh
+
+PROGRAM=dlsong
+
+die() {
+	echo "$PROGRAM: $1"
+	echo "usage: $PROGRAM <url> <artist> <title>"
+	exit 1
+}
+
+if [ -z "$1" ]; then
+	die 'URL is missing'
+fi
+if [ -z "$2" ]; then
+	die 'Artist name is missing'
+fi
+if [ -z "$3" ]; then
+	die 'Song title is missing'
+fi
+
+url=$1
+artist=$2
+title=$3
+file="$artist - $title.opus"
+
+yt-dlp -x --audio-format opus -o "$file" "$url" || exit 1
+tagutil set:comment="$url" "$file"
+tagutil set:artist="$artist" "$file"
+tagutil set:title="$title" "$file"
