@@ -3,5 +3,4 @@
 # I call it the *Semver charset + underscore* as it contains all the allowed
 # characters that one would find in a semver string with underscore included.
 
-# shellcheck disable=2048,2086
-find ${*:-.} -not -regex '.*/[a-zA-Z0-9.][a-zA-Z0-9._+-]*'
+find "$@" -not -regex '.*/[a-zA-Z0-9._+-]*'

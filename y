@@ -1,3 +1,3 @@
 #!/bin/sh
 
-printf 'Yes, can you stop now?\n'
+echo 'Yes, can you stop now?'

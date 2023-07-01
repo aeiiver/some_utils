@@ -1,6 +1,8 @@
 #!/bin/sh
 
-# shellcheck disable=2048,2086
-find ${*:-.} \
-    \( -type f -and -not -perm 0644 \) -or \
-    \( -type d -and -not -perm 0755 \)
+find "$@" \( \
+	\( -name .git -prune \) -or \
+	\( -type d -and -not -perm 0755 \) -or \
+	\( -type f -and -not \( -perm 0644 -or -perm 0755 \) \) \) \
+	-exec stat -c '%a %n %F' {} \; |
+	grep -vE '/.git/?'

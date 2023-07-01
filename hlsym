@@ -27,7 +27,6 @@ def highlight(fp: io.TextIOWrapper) -> None:
 
 def check(fp: io.TextIOWrapper) -> bool:
     while (row := fp.readline().rstrip('\n')) != '':
-
         for idx in range(len(row)):
             left = row[idx]
             right = row[-1 - idx]
@@ -38,18 +37,16 @@ def check(fp: io.TextIOWrapper) -> bool:
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-        description='Highlight unsymmetric parts of a file.')
+    parser = argparse.ArgumentParser(description='Highlight unsymmetric parts of a file.')
     parser.add_argument('file', help='file to highlight', type=str)
-    parser.add_argument(
-        '-q', '--quiet', help="don't output anything", action='store_true')
-
+    parser.add_argument('-q', '--quiet', help="don't output anything", action='store_true')
     args = parser.parse_args()
+
     file = args.file
     is_quiet = args.quiet
 
     with open(file, 'r') as fp:
         if is_quiet:
-            exit(int(check(fp)))
+            exit(check(fp))
         else:
             highlight(fp)
