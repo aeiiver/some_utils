@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# I couldn't come up with something better. This will spawn a bunch of PIDs...
+
+find "$@" \
+	-regextype posix-extended \
+	-regex '(.*/)?[^/]*\.git' -prune -or \
+	-type f -not -exec sh -c '! test "$(tail -c 1 "$1")" = "" && echo "$1"' -- '{}' \;
