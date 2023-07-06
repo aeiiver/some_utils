@@ -12,6 +12,7 @@ inc_gradient() {
 		i=$((i + 1))
 	done
 }
+
 dec_gradient() {
 	i=0
 	while [ "$i" -lt 255 ]; do
@@ -21,14 +22,14 @@ dec_gradient() {
 	done
 }
 
-iterations=${1:-1}
-while [ "$iterations" -gt 0 ]; do
+iters=${1:-1}
+while [ "$iters" -gt 0 ]; do
 	inc_gradient green # -> yellow
 	dec_gradient red   # -> green
 	inc_gradient blue  # -> cyan
 	dec_gradient green # -> blue
 	inc_gradient red   # -> purple
 	dec_gradient blue  # -> red
-	iterations=$((iterations - 1))
+	iters=$((iters - 1))
 done
 printf '\033[0m\n'
