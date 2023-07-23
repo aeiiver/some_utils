@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# I call it the *Semver charset + underscore* as it contains all the characters
-# allowed in a Semver string except underscore is included.
-
-find "$@" -regextype posix-extended -not -regex '(.*/)?[a-zA-Z0-9._+-]+'
+find "$@" \
+	-regextype posix-extended \
+	-not -regex '(.*\/)?\..*' -and \
+	-not -regex '(.*\/)?(\.|__?)?[a-zA-Z0-9][a-zA-Z0-9._+-]*'
