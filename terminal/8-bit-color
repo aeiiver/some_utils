@@ -1,0 +1,34 @@
+#!/bin/sh
+
+BLACK=30
+WHITE=97
+
+color=0
+while [ $color -lt 16 ]; do
+	foreground=$BLACK
+	[ $color -lt 8 ] && foreground=$WHITE
+	[ $color -eq 8 ] && printf '          ' # manually alignment
+	printf '\033[%d;48;5;%dm   %d   \033[m ' $foreground $color $color
+	eval color=$((color + 1))
+done
+printf '\n'
+
+color=16
+while [ $color -lt 232 ]; do
+	i=$((color - 16))
+	foreground=$BLACK
+	[ $((i / 18 % 2)) -eq 0 ] && foreground=$WHITE
+	[ $((i % 36)) -eq 0 ] && printf '\n'
+	printf '\033[%d;48;5;%dm%3d\033[m ' $foreground $color $color
+	eval color=$((color + 1))
+done
+printf '\n\n'
+
+color=232
+while [ $color -lt 256 ]; do
+	foreground=$BLACK
+	[ $color -lt 244 ] && foreground=$WHITE
+	printf '\033[%d;48;5;%dm %d \033[m ' $foreground $color $color
+	eval color=$((color + 1))
+done
+printf '\n'

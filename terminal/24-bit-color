@@ -1,0 +1,43 @@
+#!/bin/sh
+
+RED=255
+GREEN=0
+BLUE=0
+
+increase_color() {
+	color=$1
+	value=
+	eval value=\$"$color"
+
+	while [ "$value" -lt 255 ]; do
+		printf '\033[48;2;%d;%d;%dm ' $RED $GREEN $BLUE
+		eval "$color=$((value + 1))"
+		eval value=\$"$color"
+	done
+	printf '\033[48;2;%d;%d;%dm ' $RED $GREEN $BLUE
+}
+
+decrease_color() {
+	color=$1
+	value=
+	eval value=\$"$color"
+
+	while [ "$value" -gt 0 ]; do
+		printf '\033[48;2;%d;%d;%dm ' $RED $GREEN $BLUE
+		eval "$color=$((value - 1))"
+		eval value=\$"$color"
+	done
+	printf '\033[48;2;%d;%d;%dm ' $RED $GREEN $BLUE
+}
+
+rounds=${1:-1}
+while [ "$rounds" -gt 0 ]; do
+	increase_color GREEN # -> yellow
+	decrease_color RED   # -> green
+	increase_color BLUE  # -> cyan
+	decrease_color GREEN # -> blue
+	increase_color RED   # -> purple
+	decrease_color BLUE  # -> red
+	rounds=$((rounds - 1))
+done
+printf '\033[m\n'

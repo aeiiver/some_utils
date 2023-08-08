@@ -1,6 +1,0 @@
-#!/bin/sh
-
-find "$@" \
-	-regextype posix-extended \
-	-not -regex '(.*\/)?\..*' -and \
-	-not -regex '(.*\/)?(\.|__?)?[a-zA-Z0-9][a-zA-Z0-9._+-]*'

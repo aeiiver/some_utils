@@ -1,8 +1,0 @@
-#!/bin/sh
-
-find "$@" \
-	-regextype posix-extended \
-	-not -regex '(.*\/)?\..*' -and \
-	\( -type d -and -not -perm 0755 \) -or \
-	\( -type f -and -not \( -perm 0644 -or -perm 0755 \) \) \
-	-exec stat -c '%a %n %F' '{}' +

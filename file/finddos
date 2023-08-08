@@ -4,4 +4,5 @@ grep -PrIUl \
 	--exclude-dir='*.git' \
 	--exclude-dir=site-packages \
 	--exclude-dir=node_modules \
-	'\r$' "$@"
+	--exclude-dir=target \
+	'\r' "$@"

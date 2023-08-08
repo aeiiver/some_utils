@@ -1,0 +1,33 @@
+#!/usr/bin/env perl
+
+use 5.36.1;
+use strict;
+use warnings;
+
+use IO::Handle;
+
+sub read_count {
+    open my $fopen, '<', '/proc/stat' or die $!;
+    while (<$fopen>) {
+        my @cols = split ' ';
+        if (/processes/) {
+            my $count = $cols[1] if /processes/;
+            close $fopen;
+            return $count;
+        }
+    }
+}
+
+my $count   = read_count;
+my $total   = 0;
+my $seconds = 0;
+while () {
+    sleep 1;
+    my $prev = $count;
+    $count = read_count;
+    my $diff = $count - $prev;
+    $total += $diff;
+    $seconds++;
+    printf( "%d: %d: %d\n", $seconds, $total, $diff );
+    STDOUT->flush;
+}

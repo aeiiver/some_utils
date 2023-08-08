@@ -1,0 +1,9 @@
+#!/bin/sh
+
+code=0
+while [ $code -lt 108 ]; do
+	[ $code -gt 0 ] && [ $((code % 10)) -eq 0 ] && printf '\n'
+	printf '\033[%dm %3d \033[m' $code $code
+	code=$((code + 1))
+done
+printf '\n'
