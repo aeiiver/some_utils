@@ -1,0 +1,8 @@
+#!/bin/sh
+
+root=$(git rev-parse --show-toplevel 2>/dev/null)
+if [ -n "$root" ]; then
+    echo "$root"
+else
+    echo "Not in a git repository"
+fi
