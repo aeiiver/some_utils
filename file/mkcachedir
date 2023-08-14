@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -e
+
+if [ $# -eq 0 ]; then
+	echo "usage: $0 directory..."
+	exit 1
+fi
+
+for dir in "$@"; do
+	if [ -e "$dir" ] && ! [ -d "$dir" ]; then
+		echo "$0: error: can't overwrite file '$dir'"
+		exit 1
+	fi
+
+	mkdir -p "$dir"
+	echo "Signature: 8a477f597d28d172789f06886806bc55" >"$dir"/CACHEDIR.TAG
+	echo "$0: created '$dir'"
+done

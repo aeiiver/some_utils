@@ -1,0 +1,29 @@
+#!/bin/sh
+
+set -e
+
+if [ $# -eq 0 ]; then
+	echo "usage: $0 directory..."
+	exit 1
+fi
+
+for dir in "$@"; do
+	if [ ! -d "$dir" ]; then
+		echo "'$dir': ignored (not a directory)"
+		continue
+	fi
+
+	path=$(realpath "$dir")
+
+	while [ -n "$path" ]; do
+		tag="$path"/CACHEDIR.TAG
+		path=${path%/*}
+
+		if [ -f "$tag" ] && grep -qm 1 '^Signature: 8a477f597d28d172789f06886806bc55$' "$tag"; then
+			echo "'$dir': cache directory"
+			break
+		fi
+
+		[ -z "$path" ] && echo "'$dir': non-cache directory"
+	done
+done
