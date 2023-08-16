@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+
+import argparse
+import io
+import os
+
+
+def highlight(fp: io.TextIOWrapper) -> None:
+    RESET = '\033[0m'
+    BLACK = '\033[90m'
+    RED_BOLD = '\033[1;91m'
+
+    while (line := fp.readline()) != '':
+        line = line.rstrip('\n')
+        line_len = len(line)
+
+        for i in range(line_len):
+            left = line[i]
+            right = line[-1 - i]
+
+            if left != right:
+                print(f'{RED_BOLD}{left}{RESET}', end='')
+            else:
+                print(f'{BLACK}{left}{RESET}', end='')
+
+        print()
+
+
+def check(fp: io.TextIOWrapper) -> bool:
+    while (line := fp.readline()) != '':
+        line = line.rstrip('\n')
+
+        for i in range(len(line)):
+            left = line[i]
+            right = line[-1 - i]
+
+            if left != right:
+                return False
+
+    return True
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Highlight unsymmetric parts of a file.')
+    parser.add_argument('file', help='file to highlight', type=str)
+    parser.add_argument('-q', '--quiet', help="don't output anything", action='store_true')
+
+    args = parser.parse_args()
+    file = args.file
+    is_quiet = args.quiet
+
+    if not os.path.exists(file):
+        parser.error('file was not found')
+        exit(1)
+    if not os.path.isfile(file):
+        parser.error('file is not a regular file')
+        exit(1)
+
+    with open(file, 'r') as fp:
+        if is_quiet:
+            exit(0 if check(fp) else 1)
+        else:
+            highlight(fp)
