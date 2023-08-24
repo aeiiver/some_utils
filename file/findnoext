@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+find "$@" \
+	-regextype posix-extended \
+	-name '*.git' -prune -o \
+	-name site-packages -prune -o \
+	-name node_modules -prune -o \
+	-name target -prune -o \
+	-type f -regex '(.*/)?[^.]+\.*' -print
